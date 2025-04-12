@@ -10,5 +10,4 @@ import lombok.*;
 public class Diagnostic {
     private String code;
     private String diagnostic;
-    private String medicalRecordId;
 }
