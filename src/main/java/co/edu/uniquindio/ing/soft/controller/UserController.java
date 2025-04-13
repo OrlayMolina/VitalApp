@@ -6,9 +6,11 @@ import co.edu.uniquindio.ing.soft.model.User;
 import co.edu.uniquindio.ing.soft.model.VitalApp;
 import co.edu.uniquindio.ing.soft.enums.Role;
 
+import java.util.List;
+
 public class UserController {
 
-    private VitalApp vitalApp;
+    private final VitalApp vitalApp;
 
     public UserController(VitalApp vitalApp) {
         this.vitalApp = vitalApp;
@@ -60,6 +62,28 @@ public class UserController {
             return ((Doctor) usuario).getRole();
         } else if (usuario instanceof Patient) {
             return ((Patient) usuario).getRole();
+        }
+
+        return null;
+    }
+
+    public User buscarUsuarioPorEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return null;
+        }
+
+        List<Doctor> doctorList = vitalApp.getDoctors();
+        List<Patient> patientList = vitalApp.getPatients();
+        for (Doctor doctor : doctorList) {
+            if (doctor.getEmail() != null && doctor.getEmail().equals(email)) {
+                return doctor;
+            }
+        }
+
+        for (Patient patient : patientList) {
+            if(patient.getEmail() != null && patient.getEmail().equals(email)) {
+                return patient;
+            }
         }
 
         return null;

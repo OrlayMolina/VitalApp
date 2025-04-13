@@ -1,12 +1,10 @@
 package co.edu.uniquindio.ing.soft.controller;
 
-import co.edu.uniquindio.ing.soft.enums.Role;
-import co.edu.uniquindio.ing.soft.model.Diagnostic;
-import co.edu.uniquindio.ing.soft.model.Doctor;
-import co.edu.uniquindio.ing.soft.model.Patient;
-import co.edu.uniquindio.ing.soft.model.User;
+import co.edu.uniquindio.ing.soft.enums.*;
+import co.edu.uniquindio.ing.soft.model.*;
 import co.edu.uniquindio.ing.soft.utils.Menu;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,13 +20,14 @@ public class ModelFactoryController {
 
     private Scanner scanner;
     private DiagnosticController diagnosticController;
-    private UserController userController;
+    private final UserController userController;
+    private AppointmentController appointmentController;
     private User usuarioActual;
 
     public ModelFactoryController() {
         scanner = new Scanner(System.in);
 
-        diagnosticController = new DiagnosticController();
+        diagnosticController = new DiagnosticController(diagnosticController.getVitalApp());
         userController = new UserController(diagnosticController.getVitalApp());
         iniciarAplicacion();
     }
@@ -322,6 +321,514 @@ public class ModelFactoryController {
     }
 
     /**
+     * Registra un nuevo paciente
+     */
+    private void registrarPaciente() {
+        System.out.println("\n=== REGISTRAR NUEVO PACIENTE ===");
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        if (email == null || email.trim().isEmpty()) {
+            System.out.println("El email no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        if (userController.buscarUsuarioPorEmail(email) != null) {
+            System.out.println("Error: Ya existe un usuario con el email " + email);
+            esperarTecla();
+            return;
+        }
+
+        System.out.print("Contraseña: ");
+        String password = scanner.nextLine();
+
+        if (password == null || password.trim().isEmpty()) {
+            System.out.println("La contraseña no puede estar vacía.");
+            esperarTecla();
+            return;
+        }
+
+        System.out.print("Nombre: ");
+        String firstname = scanner.nextLine();
+
+        if (firstname == null || firstname.trim().isEmpty()) {
+            System.out.println("El nombre no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        System.out.print("Apellido: ");
+        String lastname = scanner.nextLine();
+
+        if (lastname == null || lastname.trim().isEmpty()) {
+            System.out.println("El apellido no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        // Mostrar opciones de tipo de documento
+        System.out.println("\nTipo de documento:");
+        DocumentType[] tiposDocumento = DocumentType.values();
+        for (int i = 0; i < tiposDocumento.length; i++) {
+            System.out.println((i + 1) + ". " + tiposDocumento[i]);
+        }
+
+        System.out.print("Seleccione una opción: ");
+        int opcionDocumento;
+        try {
+            opcionDocumento = Integer.parseInt(scanner.nextLine().trim());
+            if (opcionDocumento < 1 || opcionDocumento > tiposDocumento.length) {
+                System.out.println("Opción inválida. Se usará CC por defecto.");
+                opcionDocumento = 1; // Usar CC por defecto
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Formato inválido. Se usará CC por defecto.");
+            opcionDocumento = 1; // Usar CC por defecto
+        }
+
+        DocumentType documentType = tiposDocumento[opcionDocumento - 1];
+
+        System.out.print("Número de documento: ");
+        String documentNumber = scanner.nextLine();
+
+        if (documentNumber == null || documentNumber.trim().isEmpty()) {
+            System.out.println("El número de documento no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        // Verificar si ya existe un paciente con el mismo documento
+        PatientController patientController = new PatientController(diagnosticController.getVitalApp());
+        if (patientController.buscarPacientePorDocumentoNumero(documentNumber) != null) {
+            System.out.println("Error: Ya existe un paciente con el número de documento " + documentNumber);
+            esperarTecla();
+            return;
+        }
+
+        System.out.print("Edad: ");
+        int age;
+        try {
+            age = Integer.parseInt(scanner.nextLine().trim());
+            if (age <= 0) {
+                System.out.println("La edad debe ser un número positivo.");
+                esperarTecla();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Formato de edad inválido.");
+            esperarTecla();
+            return;
+        }
+
+        // Mostrar opciones de género
+        System.out.println("\nGénero:");
+        Gender[] generos = Gender.values();
+        for (int i = 0; i < generos.length; i++) {
+            System.out.println((i + 1) + ". " + generos[i]);
+        }
+
+        System.out.print("Seleccione una opción: ");
+        int opcionGenero;
+        try {
+            opcionGenero = Integer.parseInt(scanner.nextLine().trim());
+            if (opcionGenero < 1 || opcionGenero > generos.length) {
+                System.out.println("Opción inválida. Se usará MASCULINE por defecto.");
+                opcionGenero = 1; // Usar MASCULINE por defecto
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Formato inválido. Se usará MASCULINE por defecto.");
+            opcionGenero = 1; // Usar MASCULINE por defecto
+        }
+
+        Gender gender = generos[opcionGenero - 1];
+
+        System.out.print("Dirección: ");
+        String address = scanner.nextLine();
+
+        if (address == null || address.trim().isEmpty()) {
+            System.out.println("La dirección no puede estar vacía.");
+            esperarTecla();
+            return;
+        }
+
+        Menu.mostrarProcesando();
+
+        Patient nuevoPaciente = patientController.crearPaciente(email, password, firstname, lastname,
+                documentType, documentNumber, age, gender, address);
+
+        if (nuevoPaciente != null) {
+            System.out.println("\n¡Paciente registrado exitosamente!");
+            System.out.println("Email del paciente: " + nuevoPaciente.getEmail());
+        } else {
+            System.out.println("\nError al registrar el paciente. Verifique los datos e intente nuevamente.");
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Consulta todos los pacientes
+     */
+    private void consultarPacientes() {
+        System.out.println("\n=== CONSULTAR PACIENTES ===");
+
+        Menu.mostrarProcesando();
+        PatientController patientController = new PatientController(diagnosticController.getVitalApp());
+        List<Patient> pacientes = patientController.obtenerTodosPacientes();
+
+        if (pacientes.isEmpty()) {
+            System.out.println("No se encontraron pacientes registrados.");
+        } else {
+            System.out.println("\n=== LISTA DE PACIENTES ===");
+            for (Patient paciente : pacientes) {
+                System.out.println("\nNombre: " + paciente.getFirstname() + " " + paciente.getLastname());
+                System.out.println("Documento: " + paciente.getDocumentType() + " " + paciente.getDocumentNumber());
+                System.out.println("Email: " + paciente.getEmail());
+                System.out.println("Edad: " + paciente.getAge());
+                System.out.println("Género: " + paciente.getGender());
+                System.out.println("Dirección: " + paciente.getAddress());
+
+                // Mostrar diagnósticos si tiene
+                if (paciente.getDiagnostics() != null && !paciente.getDiagnostics().isEmpty()) {
+                    System.out.println("Diagnósticos:");
+                    for (Diagnostic diagnostico : paciente.getDiagnostics()) {
+                        System.out.println("  - " + diagnostico.getCode() + ": " + diagnostico.getDiagnostic());
+                    }
+                } else {
+                    System.out.println("Diagnósticos: Ninguno");
+                }
+                System.out.println("------------------------------------------");
+            }
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Actualiza los datos de un paciente
+     */
+    private void actualizarDatosPaciente() {
+        System.out.println("\n=== ACTUALIZAR DATOS DE PACIENTE ===");
+
+        System.out.print("Ingrese el email del paciente a actualizar: ");
+        String email = scanner.nextLine();
+
+        PatientController patientController = new PatientController(diagnosticController.getVitalApp());
+        Patient paciente = patientController.buscarPacientePorEmail(email);
+
+        if (paciente == null) {
+            System.out.println("No se encontró un paciente con el email proporcionado.");
+            esperarTecla();
+            return;
+        }
+
+        System.out.println("\nDatos actuales del paciente:");
+        System.out.println("Nombre: " + paciente.getFirstname() + " " + paciente.getLastname());
+        System.out.println("Documento: " + paciente.getDocumentType() + " " + paciente.getDocumentNumber());
+        System.out.println("Edad: " + paciente.getAge());
+        System.out.println("Dirección: " + paciente.getAddress());
+
+        System.out.println("\nIngrese los nuevos datos (deje en blanco para mantener el valor actual):");
+
+        System.out.print("Nueva contraseña: ");
+        String password = scanner.nextLine();
+
+        System.out.print("Nuevo nombre: ");
+        String firstname = scanner.nextLine();
+
+        System.out.print("Nuevo apellido: ");
+        String lastname = scanner.nextLine();
+
+        System.out.print("Nueva edad (0 para mantener actual): ");
+        int age;
+        try {
+            String ageStr = scanner.nextLine().trim();
+            age = ageStr.isEmpty() ? 0 : Integer.parseInt(ageStr);
+        } catch (NumberFormatException e) {
+            System.out.println("Formato de edad inválido. Se mantendrá la edad actual.");
+            age = 0;
+        }
+
+        System.out.print("Nueva dirección: ");
+        String address = scanner.nextLine();
+
+        Menu.mostrarProcesando();
+
+        boolean exito = patientController.actualizarPaciente(email, password, firstname, lastname, age, address);
+
+        if (exito) {
+            System.out.println("\n¡Datos del paciente actualizados exitosamente!");
+        } else {
+            System.out.println("\nError al actualizar los datos del paciente.");
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Agenda una nueva cita
+     */
+    private void agendarCita() {
+        System.out.println("\n=== AGENDAR NUEVA CITA ===");
+
+        // Solicitar documento del paciente
+        System.out.print("Número de documento del paciente: ");
+        String patientDocumentNumber = scanner.nextLine();
+
+        if (patientDocumentNumber == null || patientDocumentNumber.trim().isEmpty()) {
+            System.out.println("El número de documento no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        PatientController patientController = new PatientController(diagnosticController.getVitalApp());
+        Patient paciente = patientController.buscarPacientePorDocumentoNumero(patientDocumentNumber);
+
+        if (paciente == null) {
+            System.out.println("No se encontró un paciente con el número de documento proporcionado.");
+            esperarTecla();
+            return;
+        }
+
+        // Buscar doctor (se asume que el usuario actual es el doctor)
+        Doctor doctor = null;
+        if (usuarioActual instanceof Doctor) {
+            doctor = (Doctor) usuarioActual;
+        } else {
+            System.out.println("Error: Solo los doctores pueden agendar citas.");
+            esperarTecla();
+            return;
+        }
+
+        // Seleccionar día de la semana
+        System.out.println("\nDía de la cita:");
+        Day[] dias = Day.values();
+        for (int i = 0; i < dias.length; i++) {
+            System.out.println((i + 1) + ". " + dias[i]);
+        }
+
+        System.out.print("Seleccione una opción: ");
+        int opcionDia;
+        try {
+            opcionDia = Integer.parseInt(scanner.nextLine().trim());
+            if (opcionDia < 1 || opcionDia > dias.length) {
+                System.out.println("Opción inválida. Se usará MONDAY por defecto.");
+                opcionDia = 1; // Usar MONDAY por defecto
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Formato inválido. Se usará MONDAY por defecto.");
+            opcionDia = 1; // Usar MONDAY por defecto
+        }
+
+        Day day = dias[opcionDia - 1];
+
+        // Ingresar horario
+        System.out.print("Horario (HH:MM AM/PM): ");
+        String horario = scanner.nextLine();
+
+        if (horario == null || horario.trim().isEmpty()) {
+            System.out.println("El horario no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        // Preguntar si desea asociar diagnósticos
+        System.out.print("¿Desea asociar diagnósticos a esta cita? (S/N): ");
+        String respuesta = scanner.nextLine();
+
+        List<String> diagnosticCodes = new ArrayList<>();
+
+        if (respuesta.equalsIgnoreCase("S")) {
+            // Obtener todos los diagnósticos para mostrarlos
+            List<Diagnostic> diagnosticos = diagnosticController.obtenerTodosDiagnosticos();
+
+            if (diagnosticos.isEmpty()) {
+                System.out.println("No hay diagnósticos registrados en el sistema.");
+            } else {
+                System.out.println("\nDiagnósticos disponibles:");
+                for (Diagnostic diagnostico : diagnosticos) {
+                    System.out.println(diagnostico.getCode() + ": " + diagnostico.getDiagnostic());
+                }
+
+                System.out.println("\nIngrese los códigos de diagnóstico separados por coma (o deje en blanco para continuar):");
+                String codigosStr = scanner.nextLine();
+
+                if (codigosStr != null && !codigosStr.trim().isEmpty()) {
+                    String[] codigos = codigosStr.split(",");
+                    for (String codigo : codigos) {
+                        diagnosticCodes.add(codigo.trim());
+                    }
+                }
+            }
+        }
+
+        Menu.mostrarProcesando();
+
+        // Crear la cita
+        appointmentController = new AppointmentController(diagnosticController.getVitalApp());
+        Appointment nuevaCita = appointmentController.crearCita(patientDocumentNumber, doctor, day, horario, diagnosticCodes);
+
+        if (nuevaCita != null) {
+            System.out.println("\n¡Cita agendada exitosamente!");
+            System.out.println("ID de la cita: " + nuevaCita.getAppointmentId());
+            System.out.println("Paciente: " + paciente.getFirstname() + " " + paciente.getLastname());
+            System.out.println("Doctor: " + doctor.getFirstname() + " " + doctor.getLastname());
+            System.out.println("Día: " + nuevaCita.getDay());
+            System.out.println("Horario: " + nuevaCita.getHorario());
+            System.out.println("Estado: " + nuevaCita.getStatus());
+        } else {
+            System.out.println("\nError al agendar la cita. Verifique que el horario esté disponible.");
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Consulta las citas según el rol del usuario
+     */
+    private void consultarCitas() {
+        System.out.println("\n=== CONSULTAR CITAS ===");
+
+        appointmentController = new AppointmentController(diagnosticController.getVitalApp());
+        List<Appointment> citas = new ArrayList<>();
+
+        // Determinar qué citas mostrar según el rol del usuario
+        if (usuarioActual instanceof Doctor) {
+            Doctor doctor = (Doctor) usuarioActual;
+            citas = appointmentController.obtenerCitasPorDoctor(doctor);
+            System.out.println("\nMostrando citas para el doctor: " + doctor.getFirstname() + " " + doctor.getLastname());
+        } else if (usuarioActual instanceof Patient) {
+            Patient patient = (Patient) usuarioActual;
+            citas = appointmentController.obtenerCitasPorPaciente(patient.getDocumentNumber());
+            System.out.println("\nMostrando citas para el paciente: " + patient.getFirstname() + " " + patient.getLastname());
+        } else {
+            // Administrador o rol sin definir
+            citas = appointmentController.obtenerTodasCitas();
+            System.out.println("\nMostrando todas las citas");
+        }
+
+        Menu.mostrarProcesando();
+
+        if (citas.isEmpty()) {
+            System.out.println("No se encontraron citas.");
+        } else {
+            PatientController patientController = new PatientController(diagnosticController.getVitalApp());
+
+            System.out.println("\n=== LISTA DE CITAS ===");
+            for (Appointment cita : citas) {
+                System.out.println("\nID: " + cita.getAppointmentId());
+
+                // Obtener información del paciente
+                Patient paciente = patientController.buscarPacientePorDocumentoNumero(cita.getPatientDocumentNumber());
+                if (paciente != null) {
+                    System.out.println("Paciente: " + paciente.getFirstname() + " " + paciente.getLastname());
+                } else {
+                    System.out.println("Paciente: " + cita.getPatientDocumentNumber() + " (No encontrado)");
+                }
+
+                // Información del doctor (asumiendo que hay un método para buscar doctor por documento)
+                Doctor doctor = (Doctor) cita.getDoctorDocumentNumber();
+                if (doctor != null) {
+                    System.out.println("Doctor: " + doctor.getFirstname() + " " + doctor.getLastname());
+                } else {
+                    System.out.println("Doctor: No disponible");
+                }
+
+                System.out.println("Día: " + cita.getDay());
+                System.out.println("Horario: " + cita.getHorario());
+                System.out.println("Estado: " + cita.getStatus());
+                System.out.println("------------------------------------------");
+            }
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Cancela una cita existente
+     */
+    private void cancelarCita() {
+        System.out.println("\n=== CANCELAR CITA ===");
+
+        System.out.print("Ingrese el ID de la cita a cancelar: ");
+        String appointmentId = scanner.nextLine();
+
+        if (appointmentId == null || appointmentId.trim().isEmpty()) {
+            System.out.println("El ID de la cita no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        appointmentController = new AppointmentController(diagnosticController.getVitalApp());
+        Appointment cita = appointmentController.buscarCitaPorId(appointmentId);
+
+        if (cita == null) {
+            System.out.println("No se encontró una cita con el ID proporcionado.");
+            esperarTecla();
+            return;
+        }
+
+        if (cita.getStatus() == AppointmentStatus.COMPLETED) {
+            System.out.println("Error: No se puede cancelar una cita que ya fue completada.");
+            esperarTecla();
+            return;
+        }
+
+        if (cita.getStatus() == AppointmentStatus.CANCELLED) {
+            System.out.println("Esta cita ya ha sido cancelada anteriormente.");
+            esperarTecla();
+            return;
+        }
+
+        // Verificar permisos según el rol
+        if (usuarioActual instanceof Patient) {
+            Patient patient = (Patient) usuarioActual;
+            if (!cita.getPatientDocumentNumber().equals(patient.getDocumentNumber())) {
+                System.out.println("Error: No tiene permisos para cancelar citas de otros pacientes.");
+                esperarTecla();
+                return;
+            }
+        } else if (!(usuarioActual instanceof Doctor)) {
+            // Si no es doctor ni paciente, verificar si es administrador (no implementado)
+            System.out.println("Error: No tiene permisos para cancelar citas.");
+            esperarTecla();
+            return;
+        }
+
+        // Mostrar detalles de la cita antes de cancelar
+        PatientController patientController = new PatientController(diagnosticController.getVitalApp());
+        Patient paciente = patientController.buscarPacientePorDocumentoNumero(cita.getPatientDocumentNumber());
+
+        System.out.println("\nDetalles de la cita a cancelar:");
+        if (paciente != null) {
+            System.out.println("Paciente: " + paciente.getFirstname() + " " + paciente.getLastname());
+        }
+        System.out.println("Día: " + cita.getDay());
+        System.out.println("Horario: " + cita.getHorario());
+        System.out.println("Estado actual: " + cita.getStatus());
+
+        System.out.print("\n¿Está seguro que desea cancelar esta cita? (S/N): ");
+        String confirmacion = scanner.nextLine();
+
+        if (confirmacion.equalsIgnoreCase("S")) {
+            Menu.mostrarProcesando();
+            boolean exito = appointmentController.cancelarCita(appointmentId);
+
+            if (exito) {
+                System.out.println("\n¡Cita cancelada exitosamente!");
+            } else {
+                System.out.println("\nError al cancelar la cita.");
+            }
+        } else {
+            System.out.println("\nOperación cancelada.");
+        }
+
+        esperarTecla();
+    }
+
+    /**
      * Muestra el menú de diagnósticos
      */
     private void mostrarMenuDiagnosticos() {
@@ -348,19 +855,44 @@ public class ModelFactoryController {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Registrando nuevo paciente...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
+                    registrarPaciente();
                     break;
                 case 2:
-                    System.out.println("Consultando pacientes...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
+                    consultarPacientes();
                     break;
                 case 3:
-                    System.out.println("Actualizando datos de paciente...");
-                    Menu.mostrarProcesando();
+                    actualizarDatosPaciente();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menú principal...");
+                    return; // Vuelve al menú principal
+                default:
+                    System.out.println("Opción no válida. Intente nuevamente.");
                     esperarTecla();
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    /**
+     * Gestiona el menú de citas
+     */
+    private void gestionarMenuCitas() {
+        int opcion;
+
+        do {
+            mostrarMenuCitas();
+            opcion = leerOpcion();
+
+            switch (opcion) {
+                case 1:
+                    agendarCita();
+                    break;
+                case 2:
+                    consultarCitas();
+                    break;
+                case 3:
+                    cancelarCita();
                     break;
                 case 0:
                     System.out.println("Volviendo al menú principal...");
@@ -386,44 +918,6 @@ public class ModelFactoryController {
         System.out.println("║  0. Volver al menú principal     ║");
         System.out.println("╚══════════════════════════════════╝");
         System.out.print("Seleccione una opción: ");
-    }
-
-    /**
-     * Gestiona el menú de citas
-     */
-    private void gestionarMenuCitas() {
-        int opcion;
-
-        do {
-            mostrarMenuCitas();
-            opcion = leerOpcion();
-
-            switch (opcion) {
-                case 1:
-                    System.out.println("Agendando nueva cita...");
-                    Menu.mostrarProcesando();
-
-                    esperarTecla();
-                    break;
-                case 2:
-                    System.out.println("Consultando citas...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
-                    break;
-                case 3:
-                    System.out.println("Cancelando cita...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
-                    break;
-                case 0:
-                    System.out.println("Volviendo al menú principal...");
-                    return; // Vuelve al menú principal
-                default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
-                    esperarTecla();
-                    break;
-            }
-        } while (opcion != 0);
     }
 
     /**

@@ -22,7 +22,7 @@ public class DiagnosticController {
     /**
      * Constructor que inicializa el controlador cargando los datos de la persistencia
      */
-    public DiagnosticController() {
+    public DiagnosticController(VitalApp vitalApp) {
         this.vitalApp = Persistencia.cargarRecursoVitalAppXML();
 
         if (this.vitalApp == null) {
