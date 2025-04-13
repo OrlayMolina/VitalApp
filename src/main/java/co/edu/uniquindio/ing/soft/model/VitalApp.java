@@ -17,4 +17,8 @@ public class VitalApp implements Serializable {
     private List<Patient> patients = new ArrayList<>();
     private List<Appointment> appointments = new ArrayList<>();
 
+    public VitalApp() {
+
+    }
+
 }

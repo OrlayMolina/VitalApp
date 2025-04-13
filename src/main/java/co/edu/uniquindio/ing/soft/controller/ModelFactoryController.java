@@ -3,6 +3,7 @@ package co.edu.uniquindio.ing.soft.controller;
 import co.edu.uniquindio.ing.soft.enums.*;
 import co.edu.uniquindio.ing.soft.model.*;
 import co.edu.uniquindio.ing.soft.utils.Menu;
+import co.edu.uniquindio.ing.soft.utils.Persistencia;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,14 @@ public class ModelFactoryController {
 
     public ModelFactoryController() {
         scanner = new Scanner(System.in);
+        VitalApp vitalApp = Persistencia.cargarRecursoVitalAppXML();
+        if (vitalApp == null) {
+            vitalApp = new VitalApp();
+        }
 
-        diagnosticController = new DiagnosticController(diagnosticController.getVitalApp());
-        userController = new UserController(diagnosticController.getVitalApp());
+        diagnosticController = new DiagnosticController(vitalApp);
+        userController = new UserController(vitalApp);
+        appointmentController = new AppointmentController(vitalApp);
         iniciarAplicacion();
     }
 

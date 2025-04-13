@@ -1,203 +1,222 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <java version="17.0.12" class="java.beans.XMLDecoder">
-    <object class="co.edu.uniquindio.ing.soft.model.VitalApp" id="VitalApp0">
-        <void property="diagnostics">
-            <void method="add">
-                <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
-                    <void property="code">
-                        <string>C90X</string>
-                    </void>
-                    <void property="diagnostic">
-                        <string>CEFALEA</string>
-                    </void>
-                </object>
-            </void>
-            <void method="add">
-                <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
-                    <void property="code">
-                        <string>E11</string>
-                    </void>
-                    <void property="diagnostic">
-                        <string>DIABETES MELLITUS TIPO 2</string>
-                    </void>
-                </object>
-            </void>
-            <void method="add">
-                <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
-                    <void property="code">
-                        <string>I10</string>
-                    </void>
-                    <void property="diagnostic">
-                        <string>HIPERTENSION ARTERIAL</string>
-                    </void>
-                </object>
-            </void>
-        </void>
-        <void property="doctors">
-            <object class="java.util.ArrayList">
-                <void method="add">
-                    <object class="co.edu.uniquindio.ing.soft.model.Doctor">
-                        <!-- Propiedades de User -->
-                        <void method="setEmail">
-                            <string>carlos.ramirez@vitalapp.com</string>
-                        </void>
-                        <void method="setPassword">
-                            <string>doctorCarlos123</string>
-                        </void>
-                        <!-- Propiedades de Doctor -->
-                        <void property="documentNumber">
-                            <string>1094567890</string>
-                        </void>
-                        <void property="documentType">
-                            <object class="co.edu.uniquindio.ing.soft.enums.DocumentType" method="valueOf">
-                                <string>CC</string>
-                            </object>
-                        </void>
-                        <void property="firstname">
-                            <string>Carlos</string>
-                        </void>
-                        <void property="lastname">
-                            <string>Ramirez</string>
-                        </void>
-                        <void property="professionalNumber">
-                            <string>MD12345</string>
-                        </void>
-                        <void property="role">
-                            <object class="co.edu.uniquindio.ing.soft.enums.Role" method="valueOf">
-                                <string>DOCTOR</string>
-                            </object>
-                        </void>
-                    </object>
-                </void>
-                <void method="add">
-                    <object class="co.edu.uniquindio.ing.soft.model.Doctor">
-                        <!-- Propiedades de User -->
-                        <void method="setEmail">
-                            <string>laura.gomez@vitalapp.com</string>
-                        </void>
-                        <void method="setPassword">
-                            <string>doctoraLaura456</string>
-                        </void>
-                        <!-- Propiedades de Doctor -->
-                        <void property="documentNumber">
-                            <string>1094123456</string>
-                        </void>
-                        <void property="documentType">
-                            <object class="co.edu.uniquindio.ing.soft.enums.DocumentType" method="valueOf">
-                                <string>CC</string>
-                            </object>
-                        </void>
-                        <void property="firstname">
-                            <string>Laura</string>
-                        </void>
-                        <void property="lastname">
-                            <string>Gomez</string>
-                        </void>
-                        <void property="professionalNumber">
-                            <string>MD67890</string>
-                        </void>
-                        <void property="role">
-                            <object class="co.edu.uniquindio.ing.soft.enums.Role" method="valueOf">
-                                <string>DOCTOR</string>
-                            </object>
-                        </void>
-                    </object>
-                </void>
-                <void method="add">
-                    <object class="co.edu.uniquindio.ing.soft.model.Doctor">
-                        <!-- Propiedades de User -->
-                        <void method="setEmail">
-                            <string>santiago.restrepo@vitalapp.com</string>
-                        </void>
-                        <void method="setPassword">
-                            <string>doctorSantiago789</string>
-                        </void>
-                        <!-- Propiedades de Doctor -->
-                        <void property="documentNumber">
-                            <string>1094789012</string>
-                        </void>
-                        <void property="documentType">
-                            <object class="co.edu.uniquindio.ing.soft.enums.DocumentType" method="valueOf">
-                                <string>CC</string>
-                            </object>
-                        </void>
-                        <void property="firstname">
-                            <string>Santiago</string>
-                        </void>
-                        <void property="lastname">
-                            <string>Restrepo</string>
-                        </void>
-                        <void property="professionalNumber">
-                            <string>MD54321</string>
-                        </void>
-                        <void property="role">
-                            <object class="co.edu.uniquindio.ing.soft.enums.Role" method="valueOf">
-                                <string>DOCTOR</string>
-                            </object>
-                        </void>
-                    </object>
-                </void>
-            </object>
-        </void>
-        <void property="patients">
-            <object class="java.util.ArrayList">
-                <void method="add">
-                    <object class="co.edu.uniquindio.ing.soft.model.Patient">
-                        <!-- Propiedades de User -->
-                        <void method="setEmail">
-                            <string>ana.martinez@email.com</string>
-                        </void>
-                        <void method="setPassword">
-                            <string>pacienteAna123</string>
-                        </void>
-                        <!-- Propiedades de Patient -->
-                        <void property="address">
-                            <string>Calle 15 #23-45, Armenia</string>
-                        </void>
-                        <void property="age">
-                            <int>35</int>
-                        </void>
-                        <void property="documentNumber">
-                            <string>1094345678</string>
-                        </void>
-                        <void property="documentType">
-                            <object class="co.edu.uniquindio.ing.soft.enums.DocumentType" method="valueOf">
-                                <string>CC</string>
-                            </object>
-                        </void>
-                        <void property="firstname">
-                            <string>Ana</string>
-                        </void>
-                        <void property="gender">
-                            <object class="co.edu.uniquindio.ing.soft.enums.Gender" method="valueOf">
-                                <string>FEMALE</string>
-                            </object>
-                        </void>
-                        <void property="lastname">
-                            <string>Martinez</string>
-                        </void>
-                        <void property="role">
-                            <object class="co.edu.uniquindio.ing.soft.enums.Role" method="valueOf">
-                                <string>PATIENT</string>
-                            </object>
-                        </void>
-                        <void property="diagnostics">
-                            <object class="java.util.ArrayList">
-                                <void method="add">
-                                    <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
-                                        <void property="code">
-                                            <string>C90X</string>
-                                        </void>
-                                        <void property="diagnostic">
-                                            <string>CEFALEA</string>
-                                        </void>
-                                    </object>
-                                </void>
-                            </object>
-                        </void>
-                    </object>
-                </void>
-            </object>
-        </void>
+ <object class="co.edu.uniquindio.ing.soft.model.VitalApp" id="VitalApp0">
+  <void property="diagnostics">
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
+     <void property="code">
+      <string>C90X</string>
+     </void>
+     <void property="diagnostic">
+      <string>CEFALEA</string>
+     </void>
     </object>
+   </void>
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
+     <void property="code">
+      <string>E11</string>
+     </void>
+     <void property="diagnostic">
+      <string>DIABETES MELLITUS TIPO 2</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
+     <void property="code">
+      <string>I10</string>
+     </void>
+     <void property="diagnostic">
+      <string>HIPERTENSION ARTERIAL</string>
+     </void>
+    </object>
+   </void>
+  </void>
+  <void property="doctors">
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Doctor">
+     <void property="documentNumber">
+      <string>1094567890</string>
+     </void>
+     <void property="documentType">
+      <object class="java.lang.Enum" id="DocumentType0" method="valueOf">
+       <class>co.edu.uniquindio.ing.soft.enums.DocumentType</class>
+       <string>CC</string>
+      </object>
+     </void>
+     <void property="email">
+      <string>carlos.ramirez@vitalapp.com</string>
+     </void>
+     <void property="firstname">
+      <string>Carlos</string>
+     </void>
+     <void property="lastname">
+      <string>Ramirez</string>
+     </void>
+     <void property="password">
+      <string>doctorCarlos123</string>
+     </void>
+     <void property="professionalNumber">
+      <string>MD12345</string>
+     </void>
+     <void property="role">
+      <object class="java.lang.Enum" id="Role0" method="valueOf">
+       <class>co.edu.uniquindio.ing.soft.enums.Role</class>
+       <string>DOCTOR</string>
+      </object>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Doctor">
+     <void property="documentNumber">
+      <string>1094123456</string>
+     </void>
+     <void property="documentType">
+      <object idref="DocumentType0"/>
+     </void>
+     <void property="email">
+      <string>laura.gomez@vitalapp.com</string>
+     </void>
+     <void property="firstname">
+      <string>Laura</string>
+     </void>
+     <void property="lastname">
+      <string>Gomez</string>
+     </void>
+     <void property="password">
+      <string>doctoraLaura456</string>
+     </void>
+     <void property="professionalNumber">
+      <string>MD67890</string>
+     </void>
+     <void property="role">
+      <object idref="Role0"/>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Doctor">
+     <void property="documentNumber">
+      <string>1094789012</string>
+     </void>
+     <void property="documentType">
+      <object idref="DocumentType0"/>
+     </void>
+     <void property="email">
+      <string>santiago.restrepo@vitalapp.com</string>
+     </void>
+     <void property="firstname">
+      <string>Santiago</string>
+     </void>
+     <void property="lastname">
+      <string>Restrepo</string>
+     </void>
+     <void property="password">
+      <string>doctorSantiago789</string>
+     </void>
+     <void property="professionalNumber">
+      <string>MD54321</string>
+     </void>
+     <void property="role">
+      <object idref="Role0"/>
+     </void>
+    </object>
+   </void>
+  </void>
+  <void property="patients">
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Patient">
+     <void property="address">
+      <string>Calle 15 #23-45, Armenia</string>
+     </void>
+     <void property="age">
+      <int>35</int>
+     </void>
+     <void property="diagnostics">
+      <object class="java.util.ArrayList">
+       <void method="add">
+        <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
+         <void property="code">
+          <string>C90X</string>
+         </void>
+         <void property="diagnostic">
+          <string>CEFALEA</string>
+         </void>
+        </object>
+       </void>
+      </object>
+     </void>
+     <void property="documentNumber">
+      <string>1094345678</string>
+     </void>
+     <void property="documentType">
+      <object idref="DocumentType0"/>
+     </void>
+     <void property="email">
+      <string>ana.martinez@email.com</string>
+     </void>
+     <void property="firstname">
+      <string>Ana</string>
+     </void>
+     <void property="gender">
+      <object class="java.lang.Enum" id="Gender0" method="valueOf">
+       <class>co.edu.uniquindio.ing.soft.enums.Gender</class>
+       <string>FEMALE</string>
+      </object>
+     </void>
+     <void property="lastname">
+      <string>Martinez</string>
+     </void>
+     <void property="password">
+      <string>pacienteAna123</string>
+     </void>
+     <void property="role">
+      <object class="java.lang.Enum" id="Role1" method="valueOf">
+       <class>co.edu.uniquindio.ing.soft.enums.Role</class>
+       <string>PATIENT</string>
+      </object>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Patient">
+     <void property="address">
+      <string>La Adiela</string>
+     </void>
+     <void property="age">
+      <int>48</int>
+     </void>
+     <void property="diagnostics">
+      <object class="java.util.ArrayList"/>
+     </void>
+     <void property="documentNumber">
+      <string>94855633</string>
+     </void>
+     <void property="documentType">
+      <object idref="DocumentType0"/>
+     </void>
+     <void property="email">
+      <string>pacienteterminal@gamil.com</string>
+     </void>
+     <void property="firstname">
+      <string>Luz Elena</string>
+     </void>
+     <void property="gender">
+      <object idref="Gender0"/>
+     </void>
+     <void property="lastname">
+      <string>Aristizabal</string>
+     </void>
+     <void property="password">
+      <string>12345</string>
+     </void>
+     <void property="role">
+      <object idref="Role1"/>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
 </java>

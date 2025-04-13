@@ -59,7 +59,6 @@ public class PatientController {
     public Patient crearPaciente(String email, String password, String firstname, String lastname,
                                  DocumentType documentType, String documentNumber, int age, Gender gender, String address) {
 
-        // Validación de campos obligatorios
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty() ||
                 firstname == null || firstname.trim().isEmpty() || lastname == null || lastname.trim().isEmpty() ||
                 documentType == null || documentNumber == null || documentNumber.trim().isEmpty() ||
@@ -67,21 +66,18 @@ public class PatientController {
             return null;
         }
 
-        // Verificar si ya existe un paciente con el mismo email
         for (Patient patient : vitalApp.getPatients()) {
             if (patient.getEmail().equals(email)) {
-                return null; // El email ya está registrado
+                return null;
             }
         }
 
-        // Verificar si ya existe un paciente con el mismo número de documento
         for (Patient patient : vitalApp.getPatients()) {
             if (patient.getDocumentNumber().equals(documentNumber) && patient.getDocumentType() == documentType) {
-                return null; // Ya existe un paciente con el mismo documento
+                return null;
             }
         }
 
-        // Crear y añadir el nuevo paciente
         Patient nuevoPaciente = new Patient();
         nuevoPaciente.setEmail(email);
         nuevoPaciente.setPassword(password);
@@ -240,24 +236,22 @@ public class PatientController {
      * Agrega un diagnóstico a un paciente
      *
      * @param documentNumber Número de documento del paciente
-     * @param diagnostic Diagnóstico a agregar
-     * @return true si se agregó correctamente, false en caso contrario
+     * @param diagnostic     Diagnóstico a agregar
      */
-    public boolean agregarDiagnosticoAPaciente(String documentNumber, Diagnostic diagnostic) {
+    public void agregarDiagnosticoAPaciente(String documentNumber, Diagnostic diagnostic) {
         if (documentNumber == null || documentNumber.trim().isEmpty() || diagnostic == null) {
-            return false;
+            return;
         }
 
         Patient patient = buscarPacientePorDocumentoNumero(documentNumber);
 
         if (patient == null) {
-            return false;
+            return;
         }
 
-        // Verificar si ya tiene este diagnóstico
         for (Diagnostic existingDiagnostic : patient.getDiagnostics()) {
             if (existingDiagnostic.getCode().equals(diagnostic.getCode())) {
-                return true; // Ya tiene este diagnóstico, consideramos éxito
+                return;
             }
         }
 
@@ -265,7 +259,6 @@ public class PatientController {
 
         guardarCambios();
 
-        return true;
     }
 
     /**

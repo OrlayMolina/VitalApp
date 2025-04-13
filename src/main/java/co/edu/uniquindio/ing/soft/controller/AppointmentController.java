@@ -64,33 +64,28 @@ public class AppointmentController {
     public Appointment crearCita(String patientDocumentNumber, Doctor doctorDocumentNumber,
                                  Day day, String horario, List<String> diagnosticCodes) {
 
-        // Validación de campos obligatorios
         if (patientDocumentNumber == null || patientDocumentNumber.trim().isEmpty() ||
                 doctorDocumentNumber == null || day == null ||
                 horario == null || horario.trim().isEmpty()) {
             return null;
         }
 
-        // Verificar que el paciente exista
         Patient paciente = patientController.buscarPacientePorDocumentoNumero(patientDocumentNumber);
         if (paciente == null) {
             return null;
         }
 
-        // Verificar disponibilidad del horario para el doctor seleccionado
         for (Appointment cita : vitalApp.getAppointments()) {
             if (cita.getDoctorDocumentNumber().equals(doctorDocumentNumber) &&
                     cita.getDay() == day &&
                     cita.getHorario().equals(horario) &&
                     cita.getStatus() != AppointmentStatus.CANCELLED) {
-                return null; // El doctor ya tiene una cita en ese horario
+                return null;
             }
         }
 
-        // Generar ID único para la cita
         String appointmentId = UUID.randomUUID().toString();
 
-        // Crear la nueva cita
         Appointment nuevaCita = new Appointment();
         nuevaCita.setAppointmentId(appointmentId);
         nuevaCita.setPatientDocumentNumber(patientDocumentNumber);
@@ -101,7 +96,6 @@ public class AppointmentController {
 
         vitalApp.getAppointments().add(nuevaCita);
 
-        // Agregar diagnósticos al paciente si se proporcionaron
         if (diagnosticCodes != null && !diagnosticCodes.isEmpty()) {
             for (String diagnosticCode : diagnosticCodes) {
                 Diagnostic diagnostic = diagnosticController.buscarDiagnosticoPorId(diagnosticCode);
@@ -216,7 +210,6 @@ public class AppointmentController {
 
         cita.setStatus(nuevoStatus);
 
-        // Si la cita se marca como completada, agregar diagnósticos al paciente
         if (nuevoStatus == AppointmentStatus.COMPLETED && diagnosticCodes != null && !diagnosticCodes.isEmpty()) {
             for (String diagnosticCode : diagnosticCodes) {
                 Diagnostic diagnostic = diagnosticController.buscarDiagnosticoPorId(diagnosticCode);
@@ -246,7 +239,6 @@ public class AppointmentController {
             return false;
         }
 
-        // Si no se cambia ni el día ni el horario, no hay nada que hacer
         if ((newDay == null || newDay == cita.getDay()) &&
                 (newHorario == null || newHorario.trim().isEmpty() || newHorario.equals(cita.getHorario()))) {
             return true;
@@ -255,18 +247,16 @@ public class AppointmentController {
         Day diaActualizado = (newDay != null) ? newDay : cita.getDay();
         String horarioActualizado = (newHorario != null && !newHorario.trim().isEmpty()) ? newHorario : cita.getHorario();
 
-        // Verificar disponibilidad del nuevo horario para el doctor seleccionado
         for (Appointment otraCita : vitalApp.getAppointments()) {
-            if (!otraCita.getAppointmentId().equals(appointmentId) && // No es la misma cita
+            if (!otraCita.getAppointmentId().equals(appointmentId) &&
                     otraCita.getDoctorDocumentNumber().equals(cita.getDoctorDocumentNumber()) &&
                     otraCita.getDay() == diaActualizado &&
                     otraCita.getHorario().equals(horarioActualizado) &&
                     otraCita.getStatus() != AppointmentStatus.CANCELLED) {
-                return false; // El doctor ya tiene una cita en ese horario
+                return false;
             }
         }
 
-        // Actualizar la cita
         cita.setDay(diaActualizado);
         cita.setHorario(horarioActualizado);
         cita.setStatus(AppointmentStatus.RESCHEDULED);

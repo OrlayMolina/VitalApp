@@ -190,10 +190,9 @@ public class DoctorController {
         }
 
         if (professionalNumber != null && !professionalNumber.trim().isEmpty()) {
-            // Verificar que el nuevo número profesional no esté en uso por otro doctor
             Doctor doctorExistente = buscarDoctorPorNumeroProfesional(professionalNumber);
             if (doctorExistente != null && !doctorExistente.getEmail().equals(email)) {
-                return false; // El número profesional ya está en uso por otro doctor
+                return false;
             }
             doctor.setProfessionalNumber(professionalNumber);
         }
