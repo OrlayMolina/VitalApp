@@ -1,6 +1,10 @@
 package co.edu.uniquindio.ing.soft.controller;
 
+import co.edu.uniquindio.ing.soft.enums.Role;
 import co.edu.uniquindio.ing.soft.model.Diagnostic;
+import co.edu.uniquindio.ing.soft.model.Doctor;
+import co.edu.uniquindio.ing.soft.model.Patient;
+import co.edu.uniquindio.ing.soft.model.User;
 import co.edu.uniquindio.ing.soft.utils.Menu;
 
 import java.util.List;
@@ -18,11 +22,14 @@ public class ModelFactoryController {
 
     private Scanner scanner;
     private DiagnosticController diagnosticController;
+    private UserController userController;
+    private User usuarioActual;
 
     public ModelFactoryController() {
         scanner = new Scanner(System.in);
 
         diagnosticController = new DiagnosticController();
+        userController = new UserController(diagnosticController.getVitalApp());
         iniciarAplicacion();
     }
 
@@ -42,15 +49,7 @@ public class ModelFactoryController {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Iniciando sesión...");
-                    Menu.mostrarProcesando();
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    gestionarMenuPrincipal();
+                    iniciarSesion();
                     break;
                 case 0:
                     System.out.println("¡Gracias por usar VITAL APP! Hasta pronto.");
@@ -61,6 +60,48 @@ public class ModelFactoryController {
                     break;
             }
         } while (opcion != 0);
+    }
+
+    /**
+     * Maneja el proceso de inicio de sesión
+     */
+    private void iniciarSesion() {
+        System.out.println("\n=== INICIAR SESIÓN ===");
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        System.out.print("Contraseña: ");
+        String password = scanner.nextLine();
+
+        System.out.println("Verificando credenciales...");
+        Menu.mostrarProcesando();
+
+        // Autenticar usuario
+        usuarioActual = userController.autenticarUsuario(email, password);
+
+        if (usuarioActual != null) {
+            Role rol = userController.obtenerRolUsuario(usuarioActual);
+
+            String nombre = "";
+            if (usuarioActual instanceof Doctor) {
+                Doctor doctor = (Doctor) usuarioActual;
+                nombre = doctor.getFirstname() + " " + doctor.getLastname();
+            } else if (usuarioActual instanceof Patient) {
+                Patient patient = (Patient) usuarioActual;
+                nombre = patient.getFirstname() + " " + patient.getLastname();
+            }
+
+            System.out.println("\n¡Inicio de sesión exitoso!");
+            System.out.println("Bienvenido/a " + nombre);
+            System.out.println("Rol: " + rol);
+
+            esperarTecla();
+            gestionarMenuPrincipal();
+        } else {
+            System.out.println("\nCredenciales incorrectas. Por favor intente nuevamente.");
+            esperarTecla();
+        }
     }
 
     /**
@@ -87,7 +128,8 @@ public class ModelFactoryController {
                     gestionarActualizacionDatos();
                     break;
                 case 0:
-                    System.out.println("Volviendo al menú de login...");
+                    System.out.println("Cerrando sesión...");
+                    usuarioActual = null;
                     return; // Vuelve al menú de login
                 default:
                     System.out.println("Opción no válida. Intente nuevamente.");

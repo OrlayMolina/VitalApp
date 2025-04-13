@@ -12,7 +12,7 @@ import java.util.List;
 public class VitalApp implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
+    private List<Diagnostic> diagnostics = new ArrayList<>();
     private List<Doctor> doctors = new ArrayList<>();
     private List<Patient> patients = new ArrayList<>();
 

@@ -3,12 +3,20 @@ package co.edu.uniquindio.ing.soft.controller;
 import co.edu.uniquindio.ing.soft.model.Diagnostic;
 import co.edu.uniquindio.ing.soft.model.VitalApp;
 import co.edu.uniquindio.ing.soft.utils.Persistencia;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class DiagnosticController {
 
+    /**
+     * -- GETTER --
+     *  Obtiene la instancia de VitalApp
+     *
+     * @return La instancia de VitalApp
+     */
     private VitalApp vitalApp;
 
     /**
