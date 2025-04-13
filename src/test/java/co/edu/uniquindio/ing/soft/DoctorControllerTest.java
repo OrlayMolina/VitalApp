@@ -29,7 +29,7 @@ public class DoctorControllerTest {
         doctor.setRole(Role.DOCTOR);
         doctor.setFirstname("John");
         doctor.setLastname("Doe");
-        doctor.setDocumentType(DocumentType.CEDULA);
+        doctor.setDocumentType(DocumentType.CC);
         doctor.setDocumentNumber("1234567890");
         doctor.setProfessionalNumber("MED12345");
         doctors.add(doctor);
@@ -48,7 +48,7 @@ public class DoctorControllerTest {
                 "pass123",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "0987654321",
                 "MED54321"
         );
@@ -58,7 +58,7 @@ public class DoctorControllerTest {
         assertEquals("La contraseña debería ser la misma", "pass123", nuevoDoctor.getPassword());
         assertEquals("El nombre debería ser el mismo", "Jane", nuevoDoctor.getFirstname());
         assertEquals("El apellido debería ser el mismo", "Smith", nuevoDoctor.getLastname());
-        assertEquals("El tipo de documento debería ser el mismo", DocumentType.CEDULA, nuevoDoctor.getDocumentType());
+        assertEquals("El tipo de documento debería ser el mismo", DocumentType.CC, nuevoDoctor.getDocumentType());
         assertEquals("El número de documento debería ser el mismo", "0987654321", nuevoDoctor.getDocumentNumber());
         assertEquals("El número profesional debería ser el mismo", "MED54321", nuevoDoctor.getProfessionalNumber());
         assertTrue("El doctor debería estar en la lista", doctorController.obtenerTodosDoctores().contains(nuevoDoctor));
@@ -72,7 +72,7 @@ public class DoctorControllerTest {
                 "pass123",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "0987654321",
                 "MED54321"
         );
@@ -88,7 +88,7 @@ public class DoctorControllerTest {
                 "pass123",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "1234567890", // Documento ya existente
                 "MED54321"
         );
@@ -104,7 +104,7 @@ public class DoctorControllerTest {
                 "pass123",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "0987654321",
                 "MED12345" // Número profesional ya existente
         );
@@ -120,7 +120,7 @@ public class DoctorControllerTest {
                 "pass123",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "0987654321",
                 "MED54321"
         );
@@ -133,7 +133,7 @@ public class DoctorControllerTest {
                 "",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "0987654321",
                 "MED54321"
         );
@@ -163,18 +163,18 @@ public class DoctorControllerTest {
     @Test
     public void testBuscarDoctorPorDocumento() {
         // Test finding an existing doctor by document
-        Doctor doctorEncontrado = doctorController.buscarDoctorPorDocumento(DocumentType.CEDULA, "1234567890");
+        Doctor doctorEncontrado = doctorController.buscarDoctorPorDocumento(DocumentType.CC, "1234567890");
 
         assertNotNull("Debería encontrar el doctor por documento", doctorEncontrado);
         assertEquals("El documento del doctor encontrado debería coincidir", "1234567890", doctorEncontrado.getDocumentNumber());
 
         // Test with non-existing document
-        Doctor doctorNoExistente = doctorController.buscarDoctorPorDocumento(DocumentType.CEDULA, "9999999999");
+        Doctor doctorNoExistente = doctorController.buscarDoctorPorDocumento(DocumentType.CC, "9999999999");
 
         assertNull("No debería encontrar un doctor con documento no existente", doctorNoExistente);
 
         // Test with null document
-        Doctor doctorDocumentoNulo = doctorController.buscarDoctorPorDocumento(DocumentType.CEDULA, null);
+        Doctor doctorDocumentoNulo = doctorController.buscarDoctorPorDocumento(DocumentType.CC, null);
 
         assertNull("No debería encontrar un doctor con documento nulo", doctorDocumentoNulo);
 
@@ -274,7 +274,7 @@ public class DoctorControllerTest {
                 "pass123",
                 "Jane",
                 "Smith",
-                DocumentType.CEDULA,
+                DocumentType.CC,
                 "0987654321",
                 "MED54321"
         );
