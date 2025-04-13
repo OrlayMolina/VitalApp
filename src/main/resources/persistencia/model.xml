@@ -32,6 +32,16 @@
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="co.edu.uniquindio.ing.soft.model.Diagnostic">
+     <void property="code">
+      <string>C91</string>
+     </void>
+     <void property="diagnostic">
+      <string>MIELITIS 2</string>
+     </void>
+    </object>
+   </void>
   </void>
   <void property="doctors">
    <void method="add">
