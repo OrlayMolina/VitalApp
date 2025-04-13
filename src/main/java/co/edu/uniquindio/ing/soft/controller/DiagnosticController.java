@@ -25,16 +25,21 @@ public class DiagnosticController {
     /**
      * Crea un nuevo diagnóstico y lo añade a la lista de diagnósticos
      *
+     * @param code Código del diagnóstico (ingresado manualmente)
      * @param diagnostic Texto del diagnóstico
      * @return El diagnóstico creado o null si ocurrió un error
      */
-    public Diagnostic crearDiagnostico(String diagnostic) {
-        if (diagnostic == null || diagnostic.trim().isEmpty()) {
+    public Diagnostic crearDiagnostico(String code, String diagnostic) {
+        if (code == null || code.trim().isEmpty() || diagnostic == null || diagnostic.trim().isEmpty()) {
             return null;
         }
 
+        if (buscarDiagnosticoPorId(code) != null) {
+            return null; // El código ya existe
+        }
+
         Diagnostic nuevoDiagnostico = new Diagnostic();
-        nuevoDiagnostico.setCode(generarIdDiagnostico());
+        nuevoDiagnostico.setCode(code);
         nuevoDiagnostico.setDiagnostic(diagnostic);
 
         vitalApp.getDiagnostics().add(nuevoDiagnostico);
@@ -61,7 +66,7 @@ public class DiagnosticController {
             }
         }
 
-        return null; // No se encontró
+        return null;
     }
 
     /**
@@ -84,7 +89,7 @@ public class DiagnosticController {
         Diagnostic diagnostico = buscarDiagnosticoPorId(code);
 
         if (diagnostico == null) {
-            return false; // Diagnóstico no encontrado
+            return false;
         }
 
         if (diagnostic != null && !diagnostic.trim().isEmpty()) {
@@ -114,15 +119,6 @@ public class DiagnosticController {
         guardarCambios();
 
         return true;
-    }
-
-    /**
-     * Genera un código único para un nuevo diagnóstico
-     *
-     * @return Código único
-     */
-    private String generarIdDiagnostico() {
-        return "DIAG-" + System.currentTimeMillis();
     }
 
     /**

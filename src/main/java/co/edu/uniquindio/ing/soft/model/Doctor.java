@@ -9,11 +9,22 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Doctor {
+public class Doctor extends User{
     private Role role;
     private String firstname;
     private String lastname;
     private DocumentType documentType;
     private String documentNumber;
     private String professionalNumber;
+
+    public Doctor(String email, String password, Role role, String firstname, String lastname,
+                  DocumentType documentType, String documentNumber, String professionalNumber) {
+        super(email, password);
+        this.role = role;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.documentType = documentType;
+        this.documentNumber = documentNumber;
+        this.professionalNumber = professionalNumber;
+    }
 }

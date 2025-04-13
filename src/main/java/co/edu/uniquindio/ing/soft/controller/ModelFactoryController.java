@@ -1,6 +1,9 @@
 package co.edu.uniquindio.ing.soft.controller;
 
+import co.edu.uniquindio.ing.soft.model.Diagnostic;
 import co.edu.uniquindio.ing.soft.utils.Menu;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class ModelFactoryController {
@@ -14,9 +17,12 @@ public class ModelFactoryController {
     }
 
     private Scanner scanner;
+    private DiagnosticController diagnosticController;
 
     public ModelFactoryController() {
         scanner = new Scanner(System.in);
+
+        diagnosticController = new DiagnosticController();
         iniciarAplicacion();
     }
 
@@ -103,19 +109,16 @@ public class ModelFactoryController {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Registrando nuevo diagnóstico...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
+                    registrarDiagnostico();
                     break;
                 case 2:
-                    System.out.println("Consultando diagnósticos...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
+                    consultarDiagnosticos();
                     break;
                 case 3:
-                    System.out.println("Actualizando diagnóstico...");
-                    Menu.mostrarProcesando();
-                    esperarTecla();
+                    actualizarDiagnostico();
+                    break;
+                case 4:
+                    eliminarDiagnostico();
                     break;
                 case 0:
                     System.out.println("Volviendo al menú principal...");
@@ -126,6 +129,154 @@ public class ModelFactoryController {
                     break;
             }
         } while (opcion != 0);
+    }
+
+    /**
+     * Registra un nuevo diagnóstico
+     */
+    private void registrarDiagnostico() {
+        System.out.println("\n=== REGISTRAR NUEVO DIAGNÓSTICO ===");
+
+        System.out.print("Código del diagnóstico (según resolución/ley): ");
+        String codigo = scanner.nextLine();
+
+        if (codigo == null || codigo.trim().isEmpty()) {
+            System.out.println("El código del diagnóstico no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        // Verificar si el código ya existe
+        if (diagnosticController.buscarDiagnosticoPorId(codigo) != null) {
+            System.out.println("Error: Ya existe un diagnóstico con el código " + codigo);
+            esperarTecla();
+            return;
+        }
+
+        System.out.print("Diagnóstico: ");
+        String diagnosticText = scanner.nextLine();
+
+        if (diagnosticText == null || diagnosticText.trim().isEmpty()) {
+            System.out.println("El diagnóstico no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        Menu.mostrarProcesando();
+
+        Diagnostic nuevoDiagnostico = diagnosticController.crearDiagnostico(codigo, diagnosticText);
+
+        if (nuevoDiagnostico != null) {
+            System.out.println("\n¡Diagnóstico registrado exitosamente!");
+            System.out.println("Código del diagnóstico: " + nuevoDiagnostico.getCode());
+        } else {
+            System.out.println("\nError al registrar el diagnóstico. Intente nuevamente.");
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Consulta todos los diagnósticos
+     */
+    private void consultarDiagnosticos() {
+        System.out.println("\n=== CONSULTAR DIAGNÓSTICOS ===");
+
+        Menu.mostrarProcesando();
+        List<Diagnostic> diagnosticos = diagnosticController.obtenerTodosDiagnosticos();
+
+        if (diagnosticos.isEmpty()) {
+            System.out.println("No se encontraron diagnósticos registrados.");
+        } else {
+            System.out.println("\n=== LISTA DE DIAGNÓSTICOS ===");
+            for (Diagnostic diag : diagnosticos) {
+                System.out.println("\nCódigo: " + diag.getCode());
+                System.out.println("Diagnóstico: " + diag.getDiagnostic());
+                System.out.println("------------------------------------------");
+            }
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Actualiza un diagnóstico existente
+     */
+    private void actualizarDiagnostico() {
+        System.out.println("\n=== ACTUALIZAR DIAGNÓSTICO ===");
+
+        System.out.print("Ingrese el código del diagnóstico a actualizar: ");
+        String code = scanner.nextLine();
+
+        Diagnostic diagnostico = diagnosticController.buscarDiagnosticoPorId(code);
+        if (diagnostico == null) {
+            System.out.println("No se encontró un diagnóstico con el código proporcionado.");
+            esperarTecla();
+            return;
+        }
+
+        System.out.println("\nDatos actuales del diagnóstico:");
+        System.out.println("Diagnóstico: " + diagnostico.getDiagnostic());
+
+        System.out.print("\nNuevo diagnóstico: ");
+        String nuevoDiagnostico = scanner.nextLine();
+
+        if (nuevoDiagnostico == null || nuevoDiagnostico.trim().isEmpty()) {
+            System.out.println("El diagnóstico no puede estar vacío.");
+            esperarTecla();
+            return;
+        }
+
+        Menu.mostrarProcesando();
+
+        boolean exito = diagnosticController.actualizarDiagnostico(code, nuevoDiagnostico);
+
+        if (exito) {
+            System.out.println("\n¡Diagnóstico actualizado exitosamente!");
+        } else {
+            System.out.println("\nError al actualizar el diagnóstico.");
+        }
+
+        esperarTecla();
+    }
+
+    /**
+     * Elimina un diagnóstico
+     */
+    private void eliminarDiagnostico() {
+        System.out.println("\n=== ELIMINAR DIAGNÓSTICO ===");
+
+        System.out.print("Ingrese el código del diagnóstico a eliminar: ");
+        String code = scanner.nextLine();
+
+        Diagnostic diagnostico = diagnosticController.buscarDiagnosticoPorId(code);
+        if (diagnostico == null) {
+            System.out.println("No se encontró un diagnóstico con el código proporcionado.");
+            esperarTecla();
+            return;
+        }
+
+        System.out.println("\nDetalle del diagnóstico a eliminar:");
+        System.out.println("Código: " + diagnostico.getCode());
+        System.out.println("Diagnóstico: " + diagnostico.getDiagnostic());
+
+        System.out.print("\n¿Está seguro que desea eliminar este diagnóstico? (S/N): ");
+        String confirmacion = scanner.nextLine();
+
+        if (confirmacion.equalsIgnoreCase("S")) {
+            Menu.mostrarProcesando();
+            boolean exito = diagnosticController.eliminarDiagnostico(code);
+
+            if (exito) {
+                System.out.println("\n¡Diagnóstico eliminado exitosamente!");
+            } else {
+                System.out.println("\nError al eliminar el diagnóstico.");
+            }
+        } else {
+            System.out.println("\nOperación cancelada.");
+        }
+
+        esperarTecla();
     }
 
     /**
