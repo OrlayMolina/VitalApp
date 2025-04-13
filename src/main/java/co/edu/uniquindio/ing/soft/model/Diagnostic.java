@@ -13,4 +13,6 @@ public class Diagnostic implements Serializable {
     private static final long serialVersionUID = 1L;
     private String code;
     private String diagnostic;
+    private String description;
+
 }
