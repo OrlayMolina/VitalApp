@@ -16,9 +16,10 @@ public class Doctor extends User{
     private DocumentType documentType;
     private String documentNumber;
     private String professionalNumber;
+    private String speciality;
 
     public Doctor(String email, String password, Role role, String firstname, String lastname,
-                  DocumentType documentType, String documentNumber, String professionalNumber) {
+                  DocumentType documentType, String documentNumber, String professionalNumber, String speciality) {
         super(email, password);
         this.role = role;
         this.firstname = firstname;
@@ -26,5 +27,6 @@ public class Doctor extends User{
         this.documentType = documentType;
         this.documentNumber = documentNumber;
         this.professionalNumber = professionalNumber;
+        this.speciality = speciality;
     }
 }

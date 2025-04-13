@@ -11,127 +11,88 @@ import java.util.List;
 @Getter
 public class DiagnosticController {
 
-    /**
-     * -- GETTER --
-     *  Obtiene la instancia de VitalApp
-     *
-     * @return La instancia de VitalApp
-     */
-    private VitalApp vitalApp;
+    private final VitalApp vitalApp;
 
-    /**
-     * Constructor que inicializa el controlador cargando los datos de la persistencia
-     */
     public DiagnosticController(VitalApp vitalApp) {
-        this.vitalApp = Persistencia.cargarRecursoVitalAppXML();
+        this.vitalApp = vitalApp;
 
-        if (this.vitalApp == null) {
-            this.vitalApp = new VitalApp();
+        // Inicialización segura
+        if (this.vitalApp.getDiagnostics() == null) {
+            this.vitalApp.setDiagnostics(new ArrayList<>());
         }
     }
 
-    /**
-     * Crea un nuevo diagnóstico y lo añade a la lista de diagnósticos
-     *
-     * @param code Código del diagnóstico (ingresado manualmente)
-     * @param diagnostic Texto del diagnóstico
-     * @return El diagnóstico creado o null si ocurrió un error
-     */
     public Diagnostic crearDiagnostico(String code, String diagnostic) {
-        if (code == null || code.trim().isEmpty() || diagnostic == null || diagnostic.trim().isEmpty()) {
+        if (code == null || code.trim().isEmpty() ||
+                diagnostic == null || diagnostic.trim().isEmpty()) {
             return null;
         }
 
-        if (buscarDiagnosticoPorId(code) != null) {
-            return null; // El código ya existe
+        // Verificación más estricta de código existente
+        if (vitalApp.getDiagnostics().stream()
+                .anyMatch(d -> d.getCode().equalsIgnoreCase(code.trim()))) {
+            return null;
         }
 
         Diagnostic nuevoDiagnostico = new Diagnostic();
-        nuevoDiagnostico.setCode(code);
-        nuevoDiagnostico.setDiagnostic(diagnostic);
+        nuevoDiagnostico.setCode(code.trim());
+        nuevoDiagnostico.setDiagnostic(diagnostic.trim());
 
         vitalApp.getDiagnostics().add(nuevoDiagnostico);
-
         guardarCambios();
 
         return nuevoDiagnostico;
     }
 
-    /**
-     * Busca un diagnóstico por su código
-     *
-     * @param code Código del diagnóstico
-     * @return El diagnóstico encontrado o null si no existe
-     */
     public Diagnostic buscarDiagnosticoPorId(String code) {
         if (code == null || code.trim().isEmpty()) {
             return null;
         }
 
-        for (Diagnostic diagnostico : vitalApp.getDiagnostics()) {
-            if (diagnostico.getCode().equals(code)) {
-                return diagnostico;
-            }
-        }
-
-        return null;
+        return vitalApp.getDiagnostics().stream()
+                .filter(d -> d.getCode().equalsIgnoreCase(code.trim()))
+                .findFirst()
+                .orElse(null);
     }
 
-    /**
-     * Obtiene todos los diagnósticos
-     *
-     * @return Lista de todos los diagnósticos
-     */
     public List<Diagnostic> obtenerTodosDiagnosticos() {
         return new ArrayList<>(vitalApp.getDiagnostics());
     }
 
-    /**
-     * Actualiza un diagnóstico existente
-     *
-     * @param code Código del diagnóstico a actualizar
-     * @param diagnostic Nuevo texto de diagnóstico
-     * @return true si se actualizó correctamente, false en caso contrario
-     */
     public boolean actualizarDiagnostico(String code, String diagnostic) {
-        Diagnostic diagnostico = buscarDiagnosticoPorId(code);
-
-        if (diagnostico == null) {
+        if (code == null || code.trim().isEmpty() ||
+                diagnostic == null || diagnostic.trim().isEmpty()) {
             return false;
         }
 
-        if (diagnostic != null && !diagnostic.trim().isEmpty()) {
-            diagnostico.setDiagnostic(diagnostic);
+        Diagnostic existente = buscarDiagnosticoPorId(code);
+        if (existente == null) {
+            return false;
         }
 
+        existente.setDiagnostic(diagnostic.trim());
         guardarCambios();
-
         return true;
     }
 
-    /**
-     * Elimina un diagnóstico
-     *
-     * @param code Código del diagnóstico a eliminar
-     * @return true si se eliminó correctamente, false en caso contrario
-     */
     public boolean eliminarDiagnostico(String code) {
-        Diagnostic diagnostico = buscarDiagnosticoPorId(code);
-
-        if (diagnostico == null) {
+        if (code == null || code.trim().isEmpty()) {
             return false;
         }
 
-        vitalApp.getDiagnostics().remove(diagnostico);
+        Diagnostic aEliminar = buscarDiagnosticoPorId(code);
+        if (aEliminar == null) {
+            return false;
+        }
 
-        guardarCambios();
-
-        return true;
+        boolean eliminado = vitalApp.getDiagnostics().remove(aEliminar);
+        if (eliminado) {
+            guardarCambios();
+            return true;
+        }
+        return false;
     }
 
-    /**
-     * Guarda los cambios en la persistencia
-     */
     private void guardarCambios() {
         Persistencia.guardarRecursoVitalAppXML(vitalApp);
     }

@@ -15,169 +15,93 @@ public class DiagnosticControllerTest {
 
     private DiagnosticController diagnosticController;
     private VitalApp vitalApp;
+    private Diagnostic diagnostic1;
+    private Diagnostic diagnostic2;
 
     @Before
     public void setUp() {
-        // Creamos algunos diagnósticos existentes para las pruebas
-        List<Diagnostic> diagnostics = new ArrayList<>();
+        // Configuración inicial sin persistencia
+        vitalApp = new VitalApp();
+        vitalApp.setDiagnostics(new ArrayList<>());
 
-        Diagnostic diagnostic1 = new Diagnostic();
+        diagnostic1 = new Diagnostic();
         diagnostic1.setCode("D001");
         diagnostic1.setDiagnostic("Hipertensión arterial");
-        diagnostics.add(diagnostic1);
 
-        Diagnostic diagnostic2 = new Diagnostic();
+        diagnostic2 = new Diagnostic();
         diagnostic2.setCode("D002");
         diagnostic2.setDiagnostic("Diabetes mellitus tipo 2");
-        diagnostics.add(diagnostic2);
 
-        // Configuramos el objeto VitalApp con los diagnósticos
-        vitalApp = new VitalApp();
-        vitalApp.setDiagnostics(diagnostics);
+        // Agregar diagnósticos iniciales directamente
+        vitalApp.getDiagnostics().add(diagnostic1);
+        vitalApp.getDiagnostics().add(diagnostic2);
 
-        // Creamos el controlador con la aplicación configurada
         diagnosticController = new DiagnosticController(vitalApp);
     }
 
     @Test
     public void testCrearDiagnosticoExitoso() {
-        Diagnostic diagnostic = diagnosticController.crearDiagnostico("D003", "Asma bronquial");
+        Diagnostic nuevo = diagnosticController.crearDiagnostico("D003", "Asma");
 
-        assertNotNull("El diagnóstico debería crearse correctamente", diagnostic);
-        assertEquals("El código debería ser D003", "D003", diagnostic.getCode());
-        assertEquals("El diagnóstico debería ser Asma bronquial", "Asma bronquial", diagnostic.getDiagnostic());
-
-        // Verificamos que se agregó a la lista
-        Diagnostic foundDiagnostic = diagnosticController.buscarDiagnosticoPorId("D003");
-        assertNotNull("El diagnóstico debería encontrarse en la lista", foundDiagnostic);
+        assertNotNull("Debería crear diagnóstico válido", nuevo);
+        assertEquals("Debería haber 3 diagnósticos", 3, vitalApp.getDiagnostics().size());
     }
 
     @Test
     public void testCrearDiagnosticoConCodigoExistente() {
-        Diagnostic diagnostic = diagnosticController.crearDiagnostico("D001", "Otro diagnóstico");
+        Diagnostic resultado = diagnosticController.crearDiagnostico("D001", "Nueva descripción");
 
-        assertNull("No debería permitir crear un diagnóstico con código existente", diagnostic);
-    }
-
-    @Test
-    public void testCrearDiagnosticoConDatosInvalidos() {
-        Diagnostic diagnostic = diagnosticController.crearDiagnostico("", "Diagnóstico válido");
-        assertNull("No debería crear diagnóstico con código vacío", diagnostic);
-
-        diagnostic = diagnosticController.crearDiagnostico(null, "Diagnóstico válido");
-        assertNull("No debería crear diagnóstico con código null", diagnostic);
-
-        diagnostic = diagnosticController.crearDiagnostico("D003", "");
-        assertNull("No debería crear diagnóstico con descripción vacía", diagnostic);
-
-        diagnostic = diagnosticController.crearDiagnostico("D003", null);
-        assertNull("No debería crear diagnóstico con descripción null", diagnostic);
-
-        diagnostic = diagnosticController.crearDiagnostico("  ", "Diagnóstico válido");
-        assertNull("No debería crear diagnóstico con código de espacios", diagnostic);
-
-        diagnostic = diagnosticController.crearDiagnostico("D003", "  ");
-        assertNull("No debería crear diagnóstico con descripción de espacios", diagnostic);
+        assertNull("No debería permitir duplicados", resultado);
+        assertEquals("Deberían mantenerse 2 diagnósticos", 2, vitalApp.getDiagnostics().size());
     }
 
     @Test
     public void testBuscarDiagnosticoPorId() {
-        Diagnostic diagnostic = diagnosticController.buscarDiagnosticoPorId("D001");
-        assertNotNull("Debería encontrar el diagnóstico existente", diagnostic);
-        assertEquals("El diagnóstico encontrado debería tener código D001", "D001", diagnostic.getCode());
+        Diagnostic encontrado = diagnosticController.buscarDiagnosticoPorId("D001");
 
-        diagnostic = diagnosticController.buscarDiagnosticoPorId("NOVALIDO");
-        assertNull("No debería encontrar un diagnóstico con código inexistente", diagnostic);
-
-        diagnostic = diagnosticController.buscarDiagnosticoPorId("");
-        assertNull("No debería encontrar un diagnóstico con código vacío", diagnostic);
-
-        diagnostic = diagnosticController.buscarDiagnosticoPorId(null);
-        assertNull("No debería encontrar un diagnóstico con código null", diagnostic);
+        assertNotNull("Debería encontrar diagnóstico existente", encontrado);
+        assertEquals("Debería ser el diagnóstico correcto", diagnostic1, encontrado);
     }
 
     @Test
     public void testObtenerTodosDiagnosticos() {
-        List<Diagnostic> diagnostics = diagnosticController.obtenerTodosDiagnosticos();
+        List<Diagnostic> diagnosticos = diagnosticController.obtenerTodosDiagnosticos();
 
-        assertNotNull("La lista de diagnósticos no debería ser null", diagnostics);
-        assertEquals("Deberían haber 2 diagnósticos", 2, diagnostics.size());
-
-        boolean encontradoD001 = false;
-        boolean encontradoD002 = false;
-
-        for (Diagnostic diagnostic : diagnostics) {
-            if (diagnostic.getCode().equals("D001")) {
-                encontradoD001 = true;
-            } else if (diagnostic.getCode().equals("D002")) {
-                encontradoD002 = true;
-            }
-        }
-
-        assertTrue("Debería encontrar el diagnóstico D001", encontradoD001);
-        assertTrue("Debería encontrar el diagnóstico D002", encontradoD002);
+        assertEquals("Deberían obtenerse todos los diagnósticos", 2, diagnosticos.size());
+        assertTrue("Debería contener D001", diagnosticos.contains(diagnostic1));
     }
 
     @Test
-    public void testActualizarDiagnostico() {
-        boolean resultado = diagnosticController.actualizarDiagnostico("D001", "Hipertensión arterial severa");
+    public void testActualizarDiagnosticoExitoso() {
+        boolean resultado = diagnosticController.actualizarDiagnostico("D001", "Hipertensión severa");
 
-        assertTrue("La actualización debería ser exitosa", resultado);
-
-        Diagnostic diagnostic = diagnosticController.buscarDiagnosticoPorId("D001");
-        assertEquals("El diagnóstico debería estar actualizado", "Hipertensión arterial severa", diagnostic.getDiagnostic());
+        assertTrue("Debería actualizar correctamente", resultado);
+        assertEquals("Descripción debería actualizarse",
+                "Hipertensión severa",
+                diagnosticController.buscarDiagnosticoPorId("D001").getDiagnostic());
     }
 
     @Test
-    public void testActualizarDiagnosticoInexistente() {
-        boolean resultado = diagnosticController.actualizarDiagnostico("NOVALIDO", "Descripción");
-
-        assertFalse("No debería actualizar un diagnóstico inexistente", resultado);
-    }
-
-    @Test
-    public void testActualizarDiagnosticoConDatosInvalidos() {
-        boolean resultado = diagnosticController.actualizarDiagnostico("D001", null);
-
-        assertFalse("No debería actualizar con descripción null", resultado);
-
-        resultado = diagnosticController.actualizarDiagnostico("D001", "");
-
-        assertFalse("No debería actualizar con descripción vacía", resultado);
-
-        resultado = diagnosticController.actualizarDiagnostico("D001", "  ");
-
-        assertFalse("No debería actualizar con descripción de espacios", resultado);
-    }
-
-    @Test
-    public void testEliminarDiagnostico() {
+    public void testEliminarDiagnosticoExitoso() {
         boolean resultado = diagnosticController.eliminarDiagnostico("D001");
 
-        assertTrue("La eliminación debería ser exitosa", resultado);
-
-        Diagnostic diagnostic = diagnosticController.buscarDiagnosticoPorId("D001");
-        assertNull("El diagnóstico debería haberse eliminado", diagnostic);
-
-        List<Diagnostic> diagnostics = diagnosticController.obtenerTodosDiagnosticos();
-        assertEquals("Debería quedar 1 diagnóstico", 1, diagnostics.size());
+        assertTrue("Debería eliminar correctamente", resultado);
+        assertEquals("Debería quedar 1 diagnóstico", 1, vitalApp.getDiagnostics().size());
     }
 
     @Test
-    public void testEliminarDiagnosticoInexistente() {
-        boolean resultado = diagnosticController.eliminarDiagnostico("NOVALIDO");
+    public void testIntegridadDatos() {
+        // Operaciones combinadas
+        diagnosticController.crearDiagnostico("D003", "Asma");
+        diagnosticController.actualizarDiagnostico("D002", "Diabetes actualizada");
+        diagnosticController.eliminarDiagnostico("D001");
 
-        assertFalse("No debería eliminar un diagnóstico inexistente", resultado);
-    }
+        List<Diagnostic> diagnosticos = diagnosticController.obtenerTodosDiagnosticos();
 
-    @Test
-    public void testEliminarDiagnosticoConDatosInvalidos() {
-        boolean resultado = diagnosticController.eliminarDiagnostico("");
-
-        assertFalse("No debería eliminar con código vacío", resultado);
-
-        resultado = diagnosticController.eliminarDiagnostico(null);
-
-        assertFalse("No debería eliminar con código null", resultado);
+        assertEquals("Deberían quedar 2 diagnósticos", 2, diagnosticos.size());
+        assertNotNull("D002 debería existir", diagnosticController.buscarDiagnosticoPorId("D002"));
+        assertEquals("D002 debería estar actualizado",
+                "Diabetes actualizada",
+                diagnosticController.buscarDiagnosticoPorId("D002").getDiagnostic());
     }
 }

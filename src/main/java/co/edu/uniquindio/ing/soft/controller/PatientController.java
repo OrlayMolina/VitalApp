@@ -239,26 +239,32 @@ public class PatientController {
      * @param diagnostic     Diagnóstico a agregar
      */
     public void agregarDiagnosticoAPaciente(String documentNumber, Diagnostic diagnostic) {
+        // Validación de parámetros de entrada
         if (documentNumber == null || documentNumber.trim().isEmpty() || diagnostic == null) {
             return;
         }
 
+        // Buscar el paciente
         Patient patient = buscarPacientePorDocumentoNumero(documentNumber);
-
         if (patient == null) {
             return;
         }
 
+        // Inicializar la lista de diagnósticos si es null
+        if (patient.getDiagnostics() == null) {
+            patient.setDiagnostics(new ArrayList<>());
+        }
+
+        // Verificar si el diagnóstico ya existe
         for (Diagnostic existingDiagnostic : patient.getDiagnostics()) {
             if (existingDiagnostic.getCode().equals(diagnostic.getCode())) {
-                return;
+                return; // Diagnóstico ya existe, no hacer nada
             }
         }
 
+        // Agregar el nuevo diagnóstico
         patient.getDiagnostics().add(diagnostic);
-
         guardarCambios();
-
     }
 
     /**

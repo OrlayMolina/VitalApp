@@ -15,4 +15,5 @@ public class Diagnostic implements Serializable {
     private String diagnostic;
     private String description;
 
+
 }
