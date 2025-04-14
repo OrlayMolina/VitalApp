@@ -57,8 +57,28 @@ public class ModelFactoryController {
                     iniciarSesion();
                     break;
                 case 0:
-                    System.out.println("¡Gracias por usar VITAL APP! Hasta pronto.");
-                    break;
+                    String[] mensajes = {
+                            "SALIENDO.",
+                            "SALIENDO..",
+                            "SALIENDO..",
+                            "SALIENDO",
+                            "SALIENDO.",
+                            "SALIENDO..",
+                            "SALIENDO..."
+                    };
+
+                    while (true) {  // Bucle infinito
+                        for (String msg : mensajes) {
+                            System.out.println(msg);
+                            try {
+                                Thread.sleep(500);  // Pausa de 500 milisegundos entre mensajes
+                            } catch (InterruptedException e) {
+                                // Si se interrumpe la espera, reestablecemos la interrupción
+                                Thread.currentThread().interrupt();
+                                System.out.println("El hilo fue interrumpido.");
+                            }
+                        }
+                    }
                 default:
                     System.out.println("Opción no válida. Intente nuevamente.");
                     esperarTecla();
