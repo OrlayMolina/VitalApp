@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class ArchivoUtil {
 
-    //------------------------------------ XML
+    //------------------------------------- XML
     public static Object cargarRecursoSerializadoXML(String rutaArchivo) throws IOException {
 
         XMLDecoder decodificadorXML;
